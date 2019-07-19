@@ -1,24 +1,148 @@
 Ref: https://cloud.google.com/dialogflow/docs/fulfillment-how
+Ref: https://cloud.google.com/dialogflow/docs/quickstart-fulfillment
+
+-----------------------there are two ways to use fullfillment---------
+1. Webhook
+2. Inline Editor (cloud function for firebase)
 
 --------------------------------------------------------------
-How fulfillment works:
+How fulfillment with Webhook works:
 You can enable fulfillment for any of your agent's intents. 
 To use fulfillment, you need to set up a webhook. A webhook is a web server endpoint that you create and host.
---------------------------------------------------------------
 
---------------------------------------------------------------
 Webhook request
-When an intent with fulfillment enabled is matched, Dialogflow will make an HTTP POST request to your webhook with a JSON 
-object containing information about the matched intent.
+When an intent with fulfillment enabled is matched, Dialogflow will make an HTTP *****POST***** request to your webhook with a JSON object
+containing information about the matched intent.
 
 After receiving a request, the webhook can perform any required tasks. For example, the webhook might use information from the 
 request to look up a product in a database or place an order.
 
 Finally, your webhook should respond back with instructions for what Dialogflow should do next.
---------------------------------------------------------------
+----------------------------
+Sample request to the service
+-----------------------------
+    POST https://my-service.com/action
+
+    Headers:
+    //user defined headers
+    Content-type: application/json
+
+    POST body:
+    {
+      "responseId": "ea3d77e8-ae27-41a4-9e1d-174bd461b68c",
+      "session": "projects/your-agents-project-id/agent/sessions/88d13aa8-2999-4f71-b233-39cbf3a824a0",
+      "queryResult": {
+        "queryText": "user's original query to your agent",
+        "parameters": {
+          "param": "param value"
+        },
+        "allRequiredParamsPresent": true,
+        "fulfillmentText": "Text defined in Dialogflow's console for the intent that was matched",
+        "fulfillmentMessages": [
+          {
+            "text": {
+              "text": [
+                "Text defined in Dialogflow's console for the intent that was matched"
+              ]
+            }
+          }
+        ],
+        "outputContexts": [
+          {
+            "name": "projects/your-agents-project-id/agent/sessions/88d13aa8-2999-4f71-b233-39cbf3a824a0/contexts/generic",
+            "lifespanCount": 5,
+            "parameters": {
+              "param": "param value"
+            }
+          }
+        ],
+        "intent": {
+          "name": "projects/your-agents-project-id/agent/intents/29bcd7f8-f717-4261-a8fd-2d3e451b8af8",
+          "displayName": "Matched Intent Name"
+        },
+        "intentDetectionConfidence": 1,
+        "diagnosticInfo": {},
+        "languageCode": "en"
+      },
+      "originalDetectIntentRequest": {}
+    }
+
+-----------------sample end-------------------------------------
+----------------------------------------------------------------
+Webhook response
+Once requested, your webhook should provide a response. In the response, you can specify the following things:
+
+The response that Dialogflow returns to the user.
+Updates to the contexts attached to the conversation.
+A followup event name that would cause another intent to be invoked.
+An arbitrary payload that can be sent to the original Dialogflow caller.
+Response limitations:
+
+The response must occur within 10 seconds for Actions on Google applications or 5 seconds for all other applications, 
+otherwise the request will time out.
+The response must be less than or equal to 64 KiB in size.
+
+-------------------------------Sample response from the service---------------------------
+    {
+      "fulfillmentText": "This is a text response",
+      "fulfillmentMessages": [
+        {
+          "card": {
+            "title": "card title",
+            "subtitle": "card text",
+            "imageUri": "https://assistant.google.com/static/images/molecule/Molecule-Formation-stop.png",
+            "buttons": [
+              {
+                "text": "button text",
+                "postback": "https://assistant.google.com/"
+              }
+            ]
+          }
+        }
+      ],
+      "source": "example.com",
+      "payload": {
+        "google": {
+          "expectUserResponse": true,
+          "richResponse": {
+            "items": [
+              {
+                "simpleResponse": {
+                  "textToSpeech": "this is a simple response"
+                }
+              }
+            ]
+          }
+        },
+        "facebook": {
+          "text": "Hello, Facebook!"
+        },
+        "slack": {
+          "text": "This is a text response for Slack."
+        }
+      },
+      "outputContexts": [
+        {
+          "name": "projects/${PROJECT_ID}/agent/sessions/${SESSION_ID}/contexts/context name",
+          "lifespanCount": 5,
+          "parameters": {
+            "param": "param value"
+          }
+        }
+      ],
+      "followupEventInput": {
+        "name": "event name",
+        "languageCode": "en-US",
+        "parameters": {
+          "param": "param value"
+        }
+      }
+    }
+    ------------------------end sample response-------------------------------------------------
+
 
 --------------------------------------------------------------
-Fulfillment is part of an Agent
+Fulfillment is part of an Agent Intent
 To use Fulfillment, you need a webhook (web server endpoint)
 To communicate, you need to send a request to the webhook
 then webhook does the job you want it to do
