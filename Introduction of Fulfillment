@@ -1,5 +1,7 @@
 Ref: https://cloud.google.com/dialogflow/docs/fulfillment-how
 Ref: https://cloud.google.com/dialogflow/docs/quickstart-fulfillment
+Ref: https://cloud.google.com/dialogflow/docs/fulfillment-nodejs-lib
+Ref: https://github.com/dialogflow/dialogflow-fulfillment-nodejs
 
 -----------------------there are two ways to use fullfillment---------
 1. Webhook
