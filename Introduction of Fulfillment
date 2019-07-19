@@ -1,6 +1,26 @@
 Ref: https://cloud.google.com/dialogflow/docs/fulfillment-how
 
+--------------------------------------------------------------
 How fulfillment works:
 You can enable fulfillment for any of your agent's intents. 
 To use fulfillment, you need to set up a webhook. A webhook is a web server endpoint that you create and host.
+--------------------------------------------------------------
 
+--------------------------------------------------------------
+Webhook request
+When an intent with fulfillment enabled is matched, Dialogflow will make an HTTP POST request to your webhook with a JSON 
+object containing information about the matched intent.
+
+After receiving a request, the webhook can perform any required tasks. For example, the webhook might use information from the 
+request to look up a product in a database or place an order.
+
+Finally, your webhook should respond back with instructions for what Dialogflow should do next.
+--------------------------------------------------------------
+
+--------------------------------------------------------------
+Fulfillment is part of an Agent
+To use Fulfillment, you need a webhook (web server endpoint)
+To communicate, you need to send a request to the webhook
+then webhook does the job you want it to do
+and webhook returns the response
+--------------------------------------------------------------
